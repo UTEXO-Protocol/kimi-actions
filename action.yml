@@ -1,6 +1,6 @@
 name: 'Kimi Code Review'
 description: 'AI-powered code review using Kimi (Moonshot AI) - supports /review and /ask commands'
-author: 'UTEXO-Protocol'
+author: 'xiaoju111a'
 branding:
   icon: 'star'
   color: 'blue'
