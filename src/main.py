@@ -197,7 +197,11 @@ def handle_comment_event(event: dict, config: ActionConfig):
     command, args = parse_command(comment_body)
     if not command:
         if "@kimi" in comment_body:
-            command, args = "review", ""
+            command = "review"
+            # Extract any text after @kimi as extra instructions
+            import re as _re
+            kimi_match = _re.search(r"@kimi\s+(.*)", comment_body, _re.DOTALL)
+            args = kimi_match.group(1).strip() if kimi_match else ""
         else:
             return
 
@@ -222,6 +226,8 @@ def handle_comment_event(event: dict, config: ActionConfig):
 
     try:
         if command == "review":
+            if args:
+                config.review.extra_instructions = args
             reviewer = Reviewer(github)
             result = reviewer.run(
                 repo_name, pr_number, command_quote="/review"
