@@ -99,6 +99,7 @@ def handle_pr_event(event: dict, config: ActionConfig):
             )
         except Exception:
             pass
+        sys.exit(1)
 
 
 def handle_review_comment_event(event: dict, config: ActionConfig):
