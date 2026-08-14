@@ -40,6 +40,10 @@ inputs:
     description: 'Auto review on PR open/sync (default: false, use /review command instead)'
     required: false
     default: 'false'
+  review_label:
+    description: 'Label that triggers review on PR synchronize events (default: ai-review/kimi)'
+    required: false
+    default: 'ai-review/kimi'
 
 outputs:
   review_comment:

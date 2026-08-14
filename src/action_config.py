@@ -82,6 +82,9 @@ class ActionConfig:
     describe: DescribeConfig = field(default_factory=DescribeConfig)
     improve: ImproveConfig = field(default_factory=ImproveConfig)
 
+    # Trigger label
+    review_label: str = "ai-review/kimi"
+
     # Labels
     auto_labels: bool = True
     label_mapping: Dict[str, str] = field(
@@ -112,6 +115,7 @@ class ActionConfig:
         config.model = os.environ.get("INPUT_MODEL", "kimi-k2.5")
         config.review_level = os.environ.get("INPUT_REVIEW_LEVEL", "normal")
         config.max_files = int(os.environ.get("INPUT_MAX_FILES", "50"))
+        config.review_label = os.environ.get("INPUT_REVIEW_LABEL", "ai-review/kimi")
 
         # Exclude patterns
         exclude_str = os.environ.get("INPUT_EXCLUDE_PATTERNS", "")

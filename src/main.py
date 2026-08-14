@@ -76,9 +76,10 @@ def handle_pr_event(event: dict, config: ActionConfig):
 
     # Auto actions on PR open/sync, or always on labeled event
     auto_review = get_input("auto_review", "true").lower() == "true"
+    review_label = config.review_label
     pr_labels = [l.get("name", "") for l in event.get("pull_request", {}).get("labels", [])]
     label_triggered = action == "labeled" or (
-        action == "synchronize" and any(l.startswith("ai-review") for l in pr_labels)
+        action == "synchronize" and review_label in pr_labels
     )
 
     try:
