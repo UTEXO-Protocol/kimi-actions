@@ -145,7 +145,7 @@ Follow the format shown in the instructions above.
 
             async with await Session.create(
                 work_dir=work_dir_kaos,
-                model=self.AGENT_MODEL,
+                model=self.config.model or self.AGENT_MODEL,
                 yolo=True,
                 max_steps_per_turn=50,
                 skills_dir=skills_dir_kaos,

@@ -87,7 +87,7 @@ class BaseTool(ABC):
         return footer
 
     # Agent SDK configuration
-    AGENT_MODEL = "kimi-k2.5"  # Latest model for best performance
+    AGENT_MODEL = "kimi-k2.5"  # fallback, overridden by config.model
     AGENT_BASE_URL = "https://api.moonshot.cn/v1"
 
     def setup_agent_env(self) -> Optional[str]:
@@ -109,7 +109,7 @@ class BaseTool(ABC):
 
         os.environ["KIMI_API_KEY"] = api_key
         os.environ["KIMI_BASE_URL"] = base_url
-        os.environ["KIMI_MODEL_NAME"] = self.AGENT_MODEL
+        os.environ["KIMI_MODEL_NAME"] = self.config.model or self.AGENT_MODEL
         return api_key
 
     def clone_repo(self, repo_name: str, work_dir: str, branch: str = None) -> bool:
@@ -213,7 +213,7 @@ class BaseTool(ABC):
         try:
             async with await Session.create(
                 work_dir=work_dir_kaos,
-                model=self.AGENT_MODEL,
+                model=self.config.model or self.AGENT_MODEL,
                 yolo=True,
                 max_steps_per_turn=100,
                 skills_dir=skills_dir_kaos,
