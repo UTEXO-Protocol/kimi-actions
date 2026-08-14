@@ -193,10 +193,13 @@ def handle_comment_event(event: dict, config: ActionConfig):
         logger.info("Not a PR comment, skipping")
         return
 
-    # Parse command
+    # Parse command or @kimi mention
     command, args = parse_command(comment_body)
     if not command:
-        return
+        if "@kimi" in comment_body:
+            command, args = "review", ""
+        else:
+            return
 
     pr_number = issue.get("number")
     repo_name = event.get("repository", {}).get("full_name")
