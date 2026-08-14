@@ -74,11 +74,12 @@ def handle_pr_event(event: dict, config: ActionConfig):
         logger.error(f"Failed to initialize clients: {e}")
         return
 
-    # Auto actions on PR open/sync
+    # Auto actions on PR open/sync, or always on labeled event
     auto_review = get_input("auto_review", "true").lower() == "true"
+    label_triggered = action == "labeled"
 
     try:
-        if auto_review:
+        if auto_review or label_triggered:
             logger.info("Running auto review...")
             reviewer = Reviewer(github)
             result = reviewer.run(repo_name, pr_number)
