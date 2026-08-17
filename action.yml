@@ -44,6 +44,10 @@ inputs:
     description: 'Label that triggers review on PR synchronize events (default: ai-review/kimi)'
     required: false
     default: 'ai-review/kimi'
+  pr_number:
+    description: 'PR number for manual workflow_dispatch trigger'
+    required: false
+    default: ''
 
 outputs:
   review_comment:
