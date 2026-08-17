@@ -312,6 +312,47 @@ def handle_comment_event(event: dict, config: ActionConfig):
     logger.info("Done!")
 
 
+def handle_workflow_dispatch(event: dict, config: ActionConfig):
+    """Handle workflow_dispatch event (manual trigger with pr_number input)."""
+    pr_number_str = get_input("pr_number")
+    if not pr_number_str:
+        logger.error("workflow_dispatch: pr_number input is required")
+        sys.exit(1)
+
+    try:
+        pr_number = int(pr_number_str)
+    except ValueError:
+        logger.error(f"workflow_dispatch: invalid pr_number: {pr_number_str!r}")
+        sys.exit(1)
+
+    repo_name = os.environ.get("GITHUB_REPOSITORY")
+    if not repo_name:
+        logger.error("GITHUB_REPOSITORY not set")
+        sys.exit(1)
+
+    logger.info(f"Manual dispatch: reviewing PR #{pr_number} in {repo_name}")
+
+    try:
+        github = GitHubClient(config.github_token)
+    except Exception as e:
+        logger.error(f"Failed to initialize GitHub client: {e}")
+        sys.exit(1)
+
+    try:
+        reviewer = Reviewer(github)
+        result = reviewer.run(repo_name, pr_number)
+        if result:
+            github.post_comment(repo_name, pr_number, result)
+        logger.info("Done!")
+    except Exception as e:
+        logger.error(f"Error reviewing PR #{pr_number}: {e}")
+        try:
+            github.post_comment(repo_name, pr_number, f"❌ Error processing PR: {str(e)}")
+        except Exception:
+            pass
+        sys.exit(1)
+
+
 def get_help_message() -> str:
     """Get help message with available commands."""
     return """## 🌗 Kimi Actions Help
@@ -391,6 +432,8 @@ def main():
         handle_comment_event(event, config)
     elif event_name == "pull_request_review_comment":
         handle_review_comment_event(event, config)
+    elif event_name == "workflow_dispatch":
+        handle_workflow_dispatch(event, config)
     else:
         logger.warning(f"Unsupported event: {event_name}")
         sys.exit(0)
